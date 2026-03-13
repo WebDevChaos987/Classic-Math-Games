@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Classic Math Games&trade;</title>
+  <style>
+    body {
+      background-color: #1a1a1a;
+      font-family: "Lucida Console", "Courier New", monospace;
+      text-align: center;
+      color: #C0C0C0;
+      margin: 0;
+      overflow: auto;
+    }
+    #game-container { width: 100vw; height: 100vh; position: relative; }
+    .flicker { animation: blink 0.15s infinite steps(1); }
+    @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0; } }
+    button { cursor: pointer; border: none; background-color: transparent; color: inherit; }
+    pre { display: inline-block; text-align: left; }
+    .play-btn { margin-top: 20vh; width: 120px; height: 45px; border-radius: 67px; background-color: #404040; color: #C0C0C0; border: 1px solid #666; }
+  </style>
+</head>
+<body>
+
+  <div id="game-container">
+    <h1 style="font-size: 75px; text-shadow: 0 0 5px white; padding-top: 50px;">
+      Classic Math Games&trade;
+    </h1>
+    <button class="play-btn" onclick="loadMenu()">Play</button>
+  </div>
+
+  <script>
+    const container = document.getElementById('game-container');
+
+    function loadMenu() {
+      container.innerHTML = `
+        <h1 style="font-size: 40px; color: #444;">ALSM STUDIOS SELECT</h1>
+        <br>
+        <button onclick="shoot()">
+          <pre>__________\n____/_|________| <span class="flicker">&bull;</span>\n/______|</pre>
+          <p>[ TARGET ]</p>
+        </button>
+        <br><br>
+        <button onclick="loadBinaryRain()">
+          <pre style="color: #00FF00;">10101\n01101\n11010</pre>
+          <p>[ BINARY ]</p>
+        </button><br>
+      <br>
+      
+      <button onclick="loadScatterPlot()">
+      <pre>
+             _______
+      //  ||\ \
+_____//___||_\ \___
+)  _          _    \
+|_/ \________/ \___|
+  \_/        \_/
+      
+      [ Scatter Plot ]
+
+      </pre>
+      </button>
+      <br>
+      <br>
+      <button onclick="loadClickerGame()"> 
+      <pre>
+      / [Karen] \\
+          |  -------  |
+           \\______/
+              \\/
+      </pre>
+      </button>
+      `;
+    }
+
+    function shoot() {
+      const x = Math.floor(Math.random() * (window.innerWidth - 150));
+      const y = Math.floor(Math.random() * (window.innerHeight - 150));
+      container.innerHTML = `
+        <button onclick="bullEye()" style="position: absolute; left: ${x}px; top: ${y}px;">
+          <pre style="color: darkred;">|---!---|</pre>
+        </button>
+      <button onclick="loadMenu()" style="position: fixed; top: 10px; right: 10px; color: #444; font-size: 20px;">
+        [ EXIT ]
+      </button>
+
+      `;
+    }
+
+    function bullEye() {
+      console.log("Hit!");
+      shoot();
+    }
+
+    function loadBinaryRain() {
+      container.innerHTML = `
+        <h1 style="color: #00FF00; font-size: 20px;">SYSTEM DATA...</h1>
+        <div id="rain-zone" style="position: relative; width: 100%; height: 80vh; overflow: hidden;"></div>
+        <button onclick="loadMenu()" style="position: fixed; top: 10px; right: 10px; color: #444; font-size: 20px;">
+        [ EXIT ]
+        </button>
+
+      `;
+      const rainZone = document.getElementById('rain-zone');
+
+      const rainTimer = setInterval(() => {
+        if (!document.getElementById('rain-zone')) { clearInterval(rainTimer); return; }
+        
+        const isRed = Math.random() > 0.85;
+        const xPos = Math.floor(Math.random() * window.innerWidth);
+        const btn = document.createElement('button');
+        
+        btn.innerHTML = `<pre>${Math.round(Math.random())}</pre>`;
+        btn.style.cssText = `position:absolute; left:${xPos}px; top:-50px; color:${isRed ? "#FF0000" : "#00FF00"}; font-size:24px; transition:top 4s linear;`;
+
+        btn.onclick = () => {
+          if (isRed) {
+            alert("SYSTEM ERROR: Red Data Detected.");
+            loadMenu();
+          } else {
+            btn.style.color = "#222";
+            btn.disabled = true; 
+          }
+        };
+
+        rainZone.appendChild(btn);
+        setTimeout(() => { btn.style.top = window.innerHeight + "px"; }, 50);
+        setTimeout(() => { btn.remove(); }, 4000);
+      }, 300);
+    }
+  function loadScatterPlot() {
+  container.innerHTML = `
+    <h1 style="color: #666; font-size: 18px;">LINEAR REGRESSION ANALYSIS</h1>
+    <button onclick="loadMenu()" style="position: fixed; top: 10px; right: 10px; color: #444;">[ EXIT ]</button>
+    
+    <div id="plot-zone" style="position: relative; width: 350px; height: 350px; border-left: 2px solid #555; border-bottom: 2px solid #555; margin: 50px auto;">
+        <div id="origin" style="position: absolute; bottom: -5px; left: -5px; width: 10px; height: 10px; background: #00FF00; border-radius: 50%;"></div>
+    </div>
+    <p style="color: #444;">Click the ALSM Units to normalize data.</p>
+  `;
+
+  const plotZone = document.getElementById('plot-zone');
+  
+  function spawnDataPoint() {
+    if (!document.getElementById('plot-zone')) return;
+
+    const car = document.createElement('button');
+    let x = Math.random() * 300 + 50;
+    let y = Math.random() * 300 + 50;
+    
+    // Tiny ALSM Art Car
+    car.innerHTML = `<pre style="font-size: 8px; margin:0; line-height:0.8;">  __\n_/  \\_\n[ALSM]\n-O--O-</pre>`;
+    car.style.cssText = `position: absolute; left: ${x}px; bottom: ${y}px; color: gold; padding: 0;`;
+    
+    car.onclick = () => car.remove();
+
+    plotZone.appendChild(car);
+
+    const moveInterval = setInterval(() => {
+      if (!car.parentElement) { clearInterval(moveInterval); return; }
+      
+      x -= 0.8; 
+      y -= 0.8; 
+      
+      car.style.left = x + "px";
+      car.style.bottom = y + "px";
+
+      if (x <= 0 || y <= 0) {
+        clearInterval(moveInterval);
+        alert("ANALYSIS COMPLETE: Origin Breached.");
+        loadMenu();
+      }
+    }, 50);
+  }
+
+  const spawnTimer = setInterval(() => {
+    if (!document.getElementById('plot-zone')) { clearInterval(spawnTimer); return; }
+    spawnDataPoint();
+  }, 1200);
+}
+  
+  function loadClickerGame() {
+    let credits = 0;
+    let perClick = 1;
+    let autoRate = 0;
+
+  container.innerHTML = `
+    <h1 style="color: #444;">RESOURCE ALLOCATION TERMINAL</h1>
+    <button onclick="loadMenu()" style="position: fixed; top: 10px; right: 10px; color: #444;">[ EXIT ]</button>
+    
+    <div style="margin-top: 50px;">
+      <h2 id="credit-display" style="color: gold; font-size: 30px;">Credits: 0</h2>
+      <p id="rate-display" style="color: #666;">Auto-Rate: 0/sec</p>
+      
+      <button id="main-clicker" style="margin: 20px; transition: transform 0.1s;">
+        <pre style="color: cyan; font-size: 15px;">
+           / [Karen] \\
+          |  -------  |
+           \\______/
+              \\/
+        </pre>
+      </button>
+    </div>
+
+    <div id="shop" style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px;">
+      <button id="buy-upgrade" style="background: #333; padding: 10px; border-radius: 5px;">
+        Buy Workstation (Cost: 15)
+      </button>
+    </div>
+  `;
+
+  const creditEl = document.getElementById('credit-display');
+  const rateEl = document.getElementById('rate-display');
+  const clicker = document.getElementById('main-clicker');
+  const upgradeBtn = document.getElementById('buy-upgrade');
+
+  // Manual Click
+  clicker.onclick = () => {
+    credits += perClick;
+    updateUI();
+    // Quick pop effect
+    clicker.style.transform = "scale(0.95)";
+    setTimeout(() => clicker.style.transform = "scale(1)", 50);
+  };
+
+  // Upgrade Logic
+  let upgradeCost = 15;
+  upgradeBtn.onclick = () => {
+    if (credits >= upgradeCost) {
+      credits -= upgradeCost;
+      autoRate += 1;
+      upgradeCost = Math.floor(upgradeCost * 1.5);
+      upgradeBtn.innerText = `Buy Workstation (Cost: ${upgradeCost})`;
+      updateUI();
+    }
+  };
+
+  // Auto-Clicker Timer
+  const autoTimer = setInterval(() => {
+    if (!document.getElementById('main-clicker')) {
+      clearInterval(autoTimer);
+      return;
+    }
+    credits += autoRate;
+    updateUI();
+  }, 1000);
+
+  function updateUI() {
+    creditEl.innerText = `Credits: ${credits}`;
+    rateEl.innerText = `Auto-Rate: ${autoRate}/sec`;
+  }
+}
+
+  </script>
+</body>
+</html>
